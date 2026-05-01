@@ -64,6 +64,3 @@ Sparkのメモリ管理を、限られたスペースの厩舎運営に例えて
 **考察**:
 データ量が比較的少量でも、並列度を上げることで処理時間が短縮されることを実証。
 Windows環境特有の `winutils` に関する警告（WARN）は出ているが、Sparkエンジンの計算ロジック自体は正常に動作し、並列処理の恩恵を受けられることを確認した。
-
-# Mastering-Data-Engineering-Foundations
-A knowledge base for honing implementation skills through transcription of official documentation and applying them to practical data analysis (Man-hour analysis, Statistical methods).
