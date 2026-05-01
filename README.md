@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## 🏗️ README 記載用テンプレート
 
 # 📝 5月1日：Spark Tuning 公式ドキュメントの錬成
@@ -65,7 +64,6 @@ Sparkのメモリ管理を、限られたスペースの厩舎運営に例えて
 **考察**:
 データ量が比較的少量でも、並列度を上げることで処理時間が短縮されることを実証。
 Windows環境特有の `winutils` に関する警告（WARN）は出ているが、Sparkエンジンの計算ロジック自体は正常に動作し、並列処理の恩恵を受けられることを確認した。
-=======
+
 # Mastering-Data-Engineering-Foundations
 A knowledge base for honing implementation skills through transcription of official documentation and applying them to practical data analysis (Man-hour analysis, Statistical methods).
->>>>>>> 6fb8bad19b8c0d9df56a178e83df4f174e6f4259
