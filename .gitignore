@@ -1,0 +1,22 @@
+# Spark/Hadoop
+metastore_db/
+derby.log
+spark-warehouse/
+event_log/
+*.lck
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
