@@ -14,9 +14,19 @@ skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 for i, (train_index, valid_index) in enumerate(skf.split(X, y)):
     print(f"Starting Fold {i+1}...")
     
-    # 💡 ここにモデルの学習・バリデーション・推論のロジックを肉付けしていくのね！
-    # X_train, X_valid = X.iloc[train_index], X.iloc[valid_index]
-    # y_train, y_valid = y.iloc[train_index], y.iloc[valid_index]
+    # 💡 実装の肉付けイメージ
+    dtrain = lgb.Dataset(X.iloc[train_index], label=y.iloc[train_index])
+    dvalid = lgb.Dataset(X.iloc[valid_index], label=y.iloc[valid_index])
+
+    params = {
+        'objective': 'binary',
+        'metric': 'auc',
+        'verbosity': -1,
+        'boosting_type': 'gbdt',
+        'random_state': 42
+    }
+
+    model = lgb.train(params, dtrain, valid_sets=[dtrain, dvalid])
 
 # 4. Submit
 # submission.to_csv('submission_20260502.csv', index=False)
