@@ -4,6 +4,7 @@ import apache_beam as beam
 class SplitRouteDoFn(beam.DoFn):
     
     # 🚨 動的に分岐ルートを識別するための「タグ名」をクラス定数として定義しておくのね！
+    # タイポを完全に排除し、安全なLETTERのスペルで統一するのね！
     TAG_DEAD_LETTER = 'dead_letter'
 
     def process(self, kv):
@@ -15,7 +16,7 @@ class SplitRouteDoFn(beam.DoFn):
             # 🟢 条件クリア：メインのコンベア（正常ルート）へそのまま yield で流す！
             yield (word, length)
         else:
-            # 🔴 条件落ち（ノイズ）：beam.pvalue.TaggedOutput を使い、タグ付きでサブルートへ流す！
+            # 🔴 条件落ち（ノイズ）：beam.pvalue.TaggedOutput を使い、定数タグ指定でサブルートへ流す！
             yield beam.pvalue.TaggedOutput(self.TAG_DEAD_LETTER, (word, length))
 
 def run_multiple_outputs_pipeline():
@@ -30,12 +31,12 @@ def run_multiple_outputs_pipeline():
         ])
 
         # 【今夜の主役】ParDo の戻り値として、複数のコンベアが詰まったオブジェクトを受け取る！
-        # with_outputs() の中に、サブルート用のタグ名をバシッと指定するのがBeamの決まり事なのね！
+        # with_outputs() の中に、クラス定数タグをバシッと指定するのがBeamの美しい決まり事なのね！
         results = (
             raw_kv_pairs
             | 'SplitRoute' >> beam.ParDo(SplitRouteDoFn()).with_outputs(
-                SplitRouteDoFn.TAG_DEAD_LETTER, # 👈 登録したタグ付きのサブコンベアを生成
-                main='main_route'               # 👈 メインコンベアの名前（省略すると default になるのね）
+                SplitRouteDoFn.TAG_DEAD_LETTER, # 👈 登録した定数タグ付きのサブコンベアを生成
+                main='main_route'               # 👈 メインコンベアの名前
             )
         )
 
@@ -45,7 +46,7 @@ def run_multiple_outputs_pipeline():
             | 'LogMainRoute' >> beam.Map(lambda res: print(f'🟢【メインルート通過】BigQuery行き: {res[0]} ({res[1]}文字)'))
         )
 
-        # 🚀 分岐ルートB：デッドレタールート（タグ指定でサブコンベアを個別に引っ張り出す！）
+        # 🚀 分岐ルートB：デッドレタールート（タイポなき定数タグ指定でサブコンベアを個別に引っ張り出す！）
         (
             results[SplitRouteDoFn.TAG_DEAD_LETTER]
             | 'LogDeadLetter' >> beam.Map(lambda res: print(f'🔴【デッドレター検知】別ストレージへ隔離: {res[0]} ({res[1]}文字)'))
