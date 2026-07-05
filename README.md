@@ -828,3 +828,14 @@ DWH領域から分析パイプラインの起点へとデータの射程を還�
 - **遅延データ再集計(Late Data Accumulation)の最適化**: `AccumulationMode.ACCUMULATING` により遅延到着データを既存集計結果に累積再計算し、`PaneInfoParam` の `pane.index > 0` を通じて「遅延補正フラグ(is_late)」をBQ行に埋め込むことで、分析側で「初回集計」と「遅延補正済み集計」を区別可能にする本番運用のデータ品質保証流路をマスター。
 
 > **学びの足跡**: > 「第64の型」を掌握。これで#63の「理想環境の時間集約」から#64の「本番現実の遅延データ耐性」へと処理密度を高め、Late-arriving Dataを構造的に取りこぼさない本格派データエンジニアの翼がポートフォリオに配備されました。この設計思想は姉妹プロジェクト`serverless-scraping-data-pipeline`のContent-Addressable Storage (PR#1)におけるLate-arriving Data耐性と完全に同一の哲学であり、AWS/GCPを問わない普遍的データ整合性設計の眼を獲得しました。
+>
+> ## 65. Dead Letter Queue (DLQ) パターンによる障害メッセージ構造分離・分析基盤クリーンネス保証ETL
+
+> 🪄 **たとえ**:企業のリアルタイム分析基盤において、PubSubから届く生JSONの中に「必須フィールド欠損」「文字コード不正」「スキーマ違反」等の異常メッセージが混入した時、`try/except` で例外を握りつぶして黙って捨てる(サイレント失敗)のではなく、`beam.ParDo` の `TaggedOutput` で `main_output` (正常) と `dlq_output` (異常) を明示的に分岐し、異常メッセージには `error_type` `error_message` `failed_at` 等の構造化エラー情報を付与してDLQテーブルへ隔離することで、分析基盤のクリーンネス保証と障害調査可能性を同時に確立する本番運用の障害耐性ラインを画定する
+
+理想環境の集約(#63)と遅延耐性(#64)から、本番現実の障害耐性へと処理密度を高める `Dead Letter Queue パターン(第65の型)` を習得しました。
+
+- **エラーハンドリング・ガバナンス(Error Handling Governance)の統合**: `try/except` での例外握りつぶし(サイレント失敗)を廃絶し、`beam.pvalue.TaggedOutput` による構造的分岐で「正常データと異常データの完全分離」戦略を画定。
+- **障害調査可能性(Observability)の最適化**: DLQテーブルに `raw_payload` (元データ全文) `error_type` (例外クラス名) `error_message` (詳細) `failed_at` (発生時刻)を格納することで、深夜の障害対応時にDLQを直接SQL照会するだけで根本原因が特定可能な運用設計をマスター。
+
+> **学びの足跡**: > 「第65の型」を掌握。これで#64の「遅延到着データ耐性」に加え、#65の「異常メッセージ耐性」を統べ、Late-arriving Data / Malformed Data の双方に構造的に耐える本格派データエンジニアの翼がポートフォリオに配備されました。この設計思想は姉妹プロジェクト`serverless-scraping-data-pipeline`のPR #2(Lambda retry/DLQ有効化)と完全に同一の哲学であり、AWS/GCPを問わない普遍的な障害耐性設計の眼を獲得しました。
