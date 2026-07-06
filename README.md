@@ -839,3 +839,14 @@ DWH領域から分析パイプラインの起点へとデータの射程を還�
 - **障害調査可能性(Observability)の最適化**: DLQテーブルに `raw_payload` (元データ全文) `error_type` (例外クラス名) `error_message` (詳細) `failed_at` (発生時刻)を格納することで、深夜の障害対応時にDLQを直接SQL照会するだけで根本原因が特定可能な運用設計をマスター。
 
 > **学びの足跡**: > 「第65の型」を掌握。これで#64の「遅延到着データ耐性」に加え、#65の「異常メッセージ耐性」を統べ、Late-arriving Data / Malformed Data の双方に構造的に耐える本格派データエンジニアの翼がポートフォリオに配備されました。この設計思想は姉妹プロジェクト`serverless-scraping-data-pipeline`のPR #2(Lambda retry/DLQ有効化)と完全に同一の哲学であり、AWS/GCPを問わない普遍的な障害耐性設計の眼を獲得しました。
+>
+> ## 66. BigQuery MERGE (Upsert)によるDWH層冪等性保証・重複排除ステージング→本番反映ETL
+
+> 🪄 **たとえ**:企業のDWHにおいて、Streaming Insertでは避けられない「同一ユーザーレコードの重複到着」「バッチジョブ再実行による二重書き込み」に対して、`WRITE_APPEND` で追記するだけでは分析結果が実態の2倍になる致命的問題が発生する時、`beam.io.WriteToBigQuery` でステージングテーブルへ一旦書き込み、`MERGE ... USING ... ON ... WHEN MATCHED THEN UPDATE / WHEN NOT MATCHED THEN INSERT` の Upsert 構文で本番テーブルへ**冪等に**反映することで、DWH層で「同じデータを何度流しても最終状態が同じ」を構造的に保証する本番運用のデータ整合性保証ラインを確立する
+
+Streaming Sink(#54)/Windowing(#63)/Late Data(#64)/DLQ(#65)による**取り込み層の耐性**から、DWH層の**冪等性保証**へと処理密度を一段深化させる `MERGE Upsert (第66の型)` パターンを習得しました。
+
+- **DWHガバナンス(DWH Governance)の統合**: ステージング→本番の2段階構造(`WRITE_TRUNCATE`でステージングを毎回リセット→`MERGE`で本番へ反映)による「取り込みの独立性」と「反映の冪等性」の分離戦略を画定。
+- **冪等Upsert(Idempotent Upsert)の最適化**: `ON T.user_id = S.user_id` によるキー突合と `WHEN MATCHED THEN UPDATE / WHEN NOT MATCHED THEN INSERT` の分岐で、既存レコードは更新・新規レコードは挿入する本番運用の**冪等性保証流路**をマスター。同一MERGEを何度実行しても本番テーブルの最終状態は常に同じに収束する。
+
+> **学びの足跡**: > 「第66の型」を掌握。これで#52(Write)+#53(Read)+#66(MERGE/Upsert)の**BigQuery CRUD 3点セット**が揃い、モダンデータスタックの中核であるDWHの読み書き・更新を完全に統治する本格派データエンジニアの翼がポートフォリオに配備されました。この設計思想は姉妹プロジェクト`serverless-scraping-data-pipeline`のContent-Addressable Storage(PR #1)における**S3層冪等性**と完全に同一の哲学であり、**「クラウド階層を問わず冪等性を語れる」普遍的なデータ整合性設計の眼**を獲得しました。
