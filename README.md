@@ -850,3 +850,14 @@ Streaming Sink(#54)/Windowing(#63)/Late Data(#64)/DLQ(#65)による**取り込�
 - **冪等Upsert(Idempotent Upsert)の最適化**: `ON T.user_id = S.user_id` によるキー突合と `WHEN MATCHED THEN UPDATE / WHEN NOT MATCHED THEN INSERT` の分岐で、既存レコードは更新・新規レコードは挿入する本番運用の**冪等性保証流路**をマスター。同一MERGEを何度実行しても本番テーブルの最終状態は常に同じに収束する。
 
 > **学びの足跡**: > 「第66の型」を掌握。これで#52(Write)+#53(Read)+#66(MERGE/Upsert)の**BigQuery CRUD 3点セット**が揃い、モダンデータスタックの中核であるDWHの読み書き・更新を完全に統治する本格派データエンジニアの翼がポートフォリオに配備されました。この設計思想は姉妹プロジェクト`serverless-scraping-data-pipeline`のContent-Addressable Storage(PR #1)における**S3層冪等性**と完全に同一の哲学であり、**「クラウド階層を問わず冪等性を語れる」普遍的なデータ整合性設計の眼**を獲得しました。
+>
+> ## 67. Cloud Composer (Apache Airflow) DAGによるパイプライン統括オーケストレーション・本番運用フロー統治ETL
+
+> 🪄 **たとえ**:企業の本番運用データ基盤において、#54(PubSub取り込み)/#58(BQ MERGE)/#57(DLQ監視)等のバラバラな単体パイプラインを、「毎日AM3時に順序制御付きで統合実行し、失敗時は指数バックオフでリトライし、DLQ件数が閾値超過なら自動的にDAGを失敗させる」本番運用フローとして統治したい時、`Cloud Composer` (マネージドAirflow)の `DAG` に対して厳密な `schedule_interval` (Cron形式)と `default_args` (retries/exponential_backoff)、`>>` 演算子による依存関係定義をカチッとアラインすることで、単体パイプラインの視点から**パイプライン・オブ・パイプライン**の統括視点へと設計次元を昇華する本番運用のオーケストレーションラインを確立する
+
+単体パイプライン(#52-#58)の設計から、**パイプライン統括**の視点へと設計次元を1段引き上げる `Cloud Composer DAG(第67の型)` パターンを習得しました。
+
+- **オーケストレーション・ガバナンス(Orchestration Governance)の統合**: `schedule_interval='0 3 * * *'` (Cron定義)による実行時刻統治と、`catchup=False` (遡及実行無効)+`max_active_runs=1` (同時実行制限)による**冪等性リスク排除**の統治戦略を画定。
+- **本番運用リトライ戦略(Production Retry Strategy)の最適化**: `retries=3` + `retry_exponential_backoff=True` + `max_retry_delay=1h` による指数バックオフ付きリトライと、`PythonOperator` によるDLQ件数監査(閾値100件超過でDAG失敗)を組み合わせた**Data Quality Gate**流路をマスター。
+
+> **学びの足跡**: > 「第67の型」を掌握。これで#52-#58の**単体パイプライン群**を、#67の**Airflow DAG統括**で束ね、モダンデータスタックの中核である**パイプライン・オブ・パイプライン**の視点で本番運用フローを統治する本格派データエンジニアの翼がポートフォリオに配備されました。この統括視点は姉妹プロジェクト`serverless-scraping-data-pipeline`のEventBridge Scheduled Rule(PR #1)における**時刻ベースの単一パイプライン起動**を1段深化させた形であり、**「単体設計から統括設計へ」の思考の階層アップ**を獲得しました。
