@@ -872,3 +872,14 @@ Streaming Sink(#54)/Windowing(#63)/Late Data(#64)/DLQ(#65)による**取り込�
 - **SLA遵守通知(SLA Alerting)の最適化**: `MetricThreshold` の `threshold_value=100` + `duration=300s` (5分継続でスパイク誤検知回避)+ `notification_channels` (Slack/PagerDuty)を組み合わせた**Alerting Policy** で、深夜3時の障害でも即座に対応可能な運用体制をマスター。
 
 > **学びの足跡**: > 「第68の型」を掌握。これで#67の「パイプライン統括」に加え、#68の「観測性・アラーティング」を統べ、**「本番運用が回っている実感」**を数値で証明する本格派データエンジニアの翼がポートフォリオに配備されました。この観測性設計は姉妹プロジェクト`serverless-scraping-data-pipeline`のPR #3(AWS Lambda Powertools + CloudWatch)と完全に同一の哲学であり、**「AWS/GCPを問わず、深夜3時の障害対応を可能にする観測性設計の眼」**を獲得しました。
+>
+> ## 69. IAM Service Account + Workload Identityによる最小権限設計・Blast Radius制御セキュリティ基盤ETL
+
+> 🪄 **たとえ**:企業の本番運用データ基盤において、Dataflow/Composerジョブに`roles/owner`のような広範な権限を付与すると、SA(サービスアカウント)キーが漏洩した瞬間にプロジェクト全体が乗っ取られる致命的セキュリティリスクが発生する時、`iam_admin_v1` の `CreateServiceAccountRequest` (用途明示SA作成)と `resourcemanager_v3` の `set_iam_policy` (最小権限ロール個別バインディング)、`ListServiceAccountKeysRequest` (キー存在監査)をカチッとアラインし、`roles/dataflow.worker` `roles/pubsub.subscriber` `roles/bigquery.dataEditor` 等の**必要最小限のロール**のみ付与することで、万一の侵害時も被害範囲を最小化する本番運用のBlast Radius制御セキュリティラインを確立する
+
+パイプラインの観測性(#68)から、実行主体の**セキュリティ設計(Security by Design)**へと処理密度を1段深化させる `IAM Service Account最小権限(第69の型)` パターンを習得しました。
+
+- **最小権限ガバナンス(Least-Privilege Governance)の統合**: `dataOwner`ではなく`dataEditor`(削除不可)、`pubsub.editor`ではなく`pubsub.subscriber`(発行不可)等、**ロール粒度で"やらないこと"を明示**する Blast Radius設計戦略を画定。SA命名も `dataflow-pipeline-sa` と用途明示することで監査ログでの追跡可能性を担保。
+- **キーレス運用(Keyless Operation)の最適化**: `ListServiceAccountKeysRequest` によるユーザー管理キーの存在監査と、Workload Identity Federationへの移行推奨ロジックを実装。ダウンロード可能なJSONキーを廃絶し、GKE/Cloud RunからのShort-Livedトークン認証へ移行することで**キー漏洩リスクの構造的排除**をマスター。
+
+> **学びの足跡**: > 「第69の型」を掌握。これで#68の「観測性」に加え、#69の「セキュリティ最小権限設計」を統べ、**「動くコード」から「安全に動くコード」**へと設計次元を昇華する本格派データエンジニアの翼がポートフォリオに配備されました。この最小権限設計は姉妹プロジェクト`serverless-scraping-data-pipeline`のPR #1で確立した**AWS IAM Policy最小権限**(Lambda実行ロールへのS3 PutObject限定付与)と完全に同一の哲学であり、**「AWS/GCPを問わず、Blast Radiusを構造的に制御するセキュリティ設計の眼」**を獲得しました。
