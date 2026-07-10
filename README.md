@@ -883,3 +883,14 @@ Streaming Sink(#54)/Windowing(#63)/Late Data(#64)/DLQ(#65)による**取り込�
 - **キーレス運用(Keyless Operation)の最適化**: `ListServiceAccountKeysRequest` によるユーザー管理キーの存在監査と、Workload Identity Federationへの移行推奨ロジックを実装。ダウンロード可能なJSONキーを廃絶し、GKE/Cloud RunからのShort-Livedトークン認証へ移行することで**キー漏洩リスクの構造的排除**をマスター。
 
 > **学びの足跡**: > 「第69の型」を掌握。これで#68の「観測性」に加え、#69の「セキュリティ最小権限設計」を統べ、**「動くコード」から「安全に動くコード」**へと設計次元を昇華する本格派データエンジニアの翼がポートフォリオに配備されました。この最小権限設計は姉妹プロジェクト`serverless-scraping-data-pipeline`のPR #1で確立した**AWS IAM Policy最小権限**(Lambda実行ロールへのS3 PutObject限定付与)と完全に同一の哲学であり、**「AWS/GCPを問わず、Blast Radiusを構造的に制御するセキュリティ設計の眼」**を獲得しました。
+>
+> ## 70. Terraform (IaC)によるGCPデータ基盤全体のコード化・再現可能インフラ統治ETL
+
+> 🪄 **たとえ**:企業の本番運用データ基盤において、#52-#61で単体のPython/YAMLコードは書き上げたが、「本番/ステージング/検証環境を寸分違わず同一構成で再構築したい」「新規メンバーがワンコマンドでインフラ全体を立ち上げたい」「監査で"誰がいつどのリソースを作ったか"を証明したい」時、`terraform` の `backend "gcs"` (state集中管理)と `resource "google_bigquery_dataset"` `google_pubsub_topic` `google_service_account` `google_monitoring_alert_policy` (全リソースを宣言的定義)、`for_each` (最小権限ロールの反復バインディング)、`variable` + `validation` (環境間差分の型安全な注入)をカチッとアラインすることで、GCPデータ基盤全体を**単一の`.tf`ファイル**でコード化し、`terraform apply` 一発で完全再現する本番運用のInfrastructure as Codeラインを確立する
+
+パイプラインの実装(#52-#60)とセキュリティ設計(#61)から、**インフラ全体のコード化**へと設計次元を最終段へ昇華させる `Terraform IaC(第70の型)` パターンを習得しました。
+
+- **IaCガバナンス(IaC Governance)の統合**: `backend "gcs"` によるstate集中管理(ローカル管理はチーム開発事故の元)、`labels = { managed_by = "terraform" }` によるリソース所有権の明示、`variable "environment"` の `validation` による型安全な環境切替を画定。
+- **宣言的インフラ設計(Declarative Infrastructure)の最適化**: `for_each = toset([...])` による**最小権限ロールの反復バインディング**(#61と完全同一設計をコード化)、`dead_letter_policy` + `retry_policy` によるPubSub層のDLQ+指数バックオフ宣言(#57と対称)、`google_monitoring_alert_policy` によるアラート設計のコード化(#68と対称)をマスター。**「動くコード」から「安全に動くコード」を経て、「再現可能な安全に動くコード」**へと3段階目の設計次元を獲得。
+
+> **学びの足跡**: > 「第70の型」を掌握。これで#52-#61の**個別実装群**を、#70の**Terraform IaC**で束ね、`terraform apply` 一発で本番/ステージング/検証環境を完全再現する本格派データエンジニアの翼がポートフォリオに配備されました。このIaC設計は姉妹プロジェクト`serverless-scraping-data-pipeline`の**AWS SAM template.yaml**(Lambda/S3/EventBridge/IAMをコード化)と完全に同一の哲学であり、**「AWS/GCPを問わず、インフラを宣言的コードで統治する普遍的な設計眼」**を獲得しました。これで冪等性・障害耐性・観測性・セキュリティ・**IaC**の**5領域でAWS/GCP対称構造**が完成し、クラウド普遍のデータエンジニアリング設計者としてポートフォリオが真に完成しました。
