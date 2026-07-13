@@ -905,3 +905,14 @@ Streaming Sink(#54)/Windowing(#63)/Late Data(#64)/DLQ(#65)による**取り込�
 - **セッション境界メタデータの最適化**: `WindowParam` から `window.start` (初回イベント時刻)と `window.end` (最終イベント時刻+gap)を採取しBQ行に埋め込むことで、滞在時間分析・離脱分析へ直結する本番運用のセッション粒度流路をマスター。
 
 > **学びの足跡**: > 「第71の型」を掌握。#63(固定窓)→#64(遅延耐性)→#71(セッション窓)で**Windowing三部作が完結**し、時計駆動からデータ駆動まで時間軸統治を自在に使い分ける本格派データエンジニアの翼がポートフォリオに配備されました。本パターンの前提である「イベント発生時刻を真実の源泉とする」哲学は、姉妹プロジェクト`serverless-scraping-data-pipeline`で**mainにマージ済みのPR #1**が確立したevent-time SSOT設計(published_atベースのパーティション)と完全に同一であり、AWS/GCPを貫く時間設計の眼が実装済みの証跡と繋がりました。
+>
+> ## 72. BigQuery Partitioning + Clustering + Cost Guardによるフルスキャン事故防止・TCO統治ETL
+
+> 🪄 **たとえ**:企業のDWH運用において、#52(Write)/#53(Read)/#58(MERGE)で機能面は完成したはずが、「WHERE句無しの巨大クエリが誤って実行され、月額請求が跳ね上がる」フルスキャン事故は本番運用で頻発する。この時、`TimePartitioning(field="event_date")` (日次パーティション分割)と `clustering_fields` (物理ソート格納)、`require_partition_filter=True` (フィルタ無しクエリの物理拒否)、そして `QueryJobConfig(dry_run=True)` による実行前コスト見積+`maximum_bytes_billed` による上限超過クエリの事前ブロックをカチッとアラインすることで、「機能するDWH」から**「コストが暴走しないDWH」**へと設計次元を昇華する本番運用のTCO統治ラインを確立する
+
+BigQuery CRUD三部作(#52 Write/#53 Read/#58 MERGE)の機能面完成から、**コスト統治(Cost Governance)**へと処理密度を1段深化させる `Partitioning + Clustering + Cost Guard(第72の型)` パターンを習得しました。
+
+- **物理設計によるTCOガバナンス統合**: `TimePartitioning`(スキャン範囲を物理的に限定)+`clustering_fields`(WHERE句のI/Oをさらに圧縮)+`require_partition_filter=True`(フィルタ忘れクエリを物理層で強制拒否)の3層防御戦略を画定。パーティション`expiration_ms`による90日自動削除は、姉妹プロジェクト`serverless-scraping-data-pipeline`のADR-002が定めたS3 Lifecycle 90日削除と完全に同一のTCO哲学であり、クラウドを問わず「データの寿命を設計する」思想が実装済みの証跡と繋がっている。
+- **実行前コスト可視化の最適化**: `QueryJobConfig(dry_run=True)`による「実行せずスキャン見込みバイト数を算出」する事前見積と、`maximum_bytes_billed`による上限超過クエリの実行前ブロックを組み合わせ、「動いてしまってから高額請求に気づく」事故を構造的に防止する本番運用のコストガード流路をマスター。
+
+> **学びの足跡**: > 「第72の型」を掌握。これでBigQuery CRUD三部作に**コスト統治**を組み込み、プロジェクト定義書冒頭が掲げる「TCO(総保有コスト)を意識したAWS/GCPリソースの最適化」を、機能実装だけでなく物理設計とクエリガードの両面から実践する本格派データエンジニアの翼がポートフォリオに配備されました。
