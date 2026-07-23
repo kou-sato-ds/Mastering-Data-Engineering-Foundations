@@ -1,0 +1,32 @@
+﻿name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Beam unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r 03_cloud_architecture/requirements-test.txt
+
+      - name: Run pytest
+        working-directory: 03_cloud_architecture
+        run: pytest 68_dataflow_pipeline_testing.py 69_dataflow_sideinput_window_testing.py 70_bigquery_merge_logic_testing.py 71_import_based_regression_testing.py -v
