@@ -1004,4 +1004,4 @@ DLQへの隔離(#57)と障害の可視化(#66)から、**「誰が見張り、�
 - **「実行し忘れ」の構造的排除**: `on: push / pull_request`により、コミットが積まれるたびにテストが自動実行される。**テストの価値は「書いたこと」ではなく「毎回走ること」にある**という原則を、人的要因に依存しない形で担保。
 - **条件付き検証の無条件化**: #71 STAGE 5は`pytest.importorskip`により依存未導入環境ではskipされていたが、`requirements-test.txt`にGCP SDKを明示することで**CIでは常に実行される**状態へ引き上げ。同時に`apache-beam==2.75.0`のバージョン固定で「ローカルは緑・CIは赤」という再現不能な事故を予防。
 
-> **学びの足跡**: > 「第80の型」を掌握。[ ここを結果で埋める: 例「2026-07-23、GitHub Actions上で21 passed を確認済みです」]。姉妹プロジェクト`serverless-scraping-data-pipeline`が`.github/workflows/sam-validate.yml`でIaC検証を自動化しているのと同じ思想を、GCP側のテスト実行にも適用しました。
+> **学びの足跡**: > 「第80の型」を掌握。**2026-07-23、GitHub Actions上でCIが緑になることを確認済み**です。初回実行は`actions/setup-python`の`cache: 'pip'`がリポジトリ直下の`requirements.txt`を探しに行き失敗——`cache-dependency-path`で実ファイルのパスを明示して解決しました。**CIは一度で緑にならないのが通常であり、失敗ログから原因を特定して直す過程そのものが実務**です。姉妹プロジェクト`serverless-scraping-data-pipeline`が`.github/workflows/sam-validate.yml`でIaC検証を自動化しているのと同じ思想を、GCP側のテスト実行にも適用しました。
