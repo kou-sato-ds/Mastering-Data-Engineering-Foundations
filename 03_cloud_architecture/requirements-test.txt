@@ -11,4 +11,4 @@ pytest>=8.0.0
 # 👉 #71 STAGE 5 (クライアント生成位置の検証) を skip させないために必須
 google-cloud-monitoring>=2.0.0
 google-cloud-logging>=3.0.0
-google-cloud-pubsub>=2.0.0
+google-cloud-pubsub>=2.0.0google-cloud-bigquery>=3.0.0

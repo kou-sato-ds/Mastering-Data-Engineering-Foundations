@@ -30,4 +30,5 @@ jobs:
 
       - name: Run pytest
         working-directory: 03_cloud_architecture
-        run: pytest 68_dataflow_pipeline_testing.py 69_dataflow_sideinput_window_testing.py 70_bigquery_merge_logic_testing.py 71_import_based_regression_testing.py -v
+        run: pytest 68_dataflow_pipeline_testing.py 69_dataflow_sideinput_window_testing.py 70_bigquery_merge_logic_testing.py 71_import_based_regression_testing.py 73_dag_iac_static_validation.py -v
+
