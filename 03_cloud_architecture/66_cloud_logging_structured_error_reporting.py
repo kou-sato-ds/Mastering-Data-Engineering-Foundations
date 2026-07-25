@@ -37,6 +37,8 @@ def log_structured_error(logger, exc: Exception, context: dict):
     logger.log_struct(
         {
             'message': f'{type(exc).__name__}: {exc}',
+            'error_type': type(exc).__name__,       # 👉 フィールドクエリ用に独立キー化
+            'error_message': str(exc),              # 👉 同上(#82テストの指摘による改善)
             'stack_trace': traceback.format_exc(),  # 👉 Error Reporting の自動検出キー
             'event_id': context.get('event_id'),
             'stage': context.get('stage', 'unknown'),
