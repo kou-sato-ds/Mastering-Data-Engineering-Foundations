@@ -3,7 +3,6 @@
 #
 # バージョンを固定する理由:
 #   「ローカルでは緑だが CI では赤」という再現不能な事故を防ぐため。
-#   apache-beam のマイナー更新で TestPipeline の挙動が変わる可能性がある。
 #
 # protobuf を明示固定する理由:
 #   apache-beam は protobuf<7 を要求するが、新しい google-cloud-* は 7.x を
@@ -23,7 +22,6 @@ google-cloud-pubsub>=2.0.0
 google-cloud-bigquery>=3.0.0
 
 # 👉 #76 (IAM最小権限の定数検証) を skip させないために必須
+# 　　#61 は SA作成(iam) と IAMポリシー更新(resource-manager) の2つを要求する
 google-cloud-iam>=2.0.0
-
-Add-Content -Path requirements-test.txt -Value "google-cloud-resource-manager>=1.0.0"
-Get-Content requirements-test.txt
+google-cloud-resource-manager>=1.0.0
