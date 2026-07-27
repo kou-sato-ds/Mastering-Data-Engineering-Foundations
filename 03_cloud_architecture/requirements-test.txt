@@ -21,3 +21,9 @@ google-cloud-pubsub>=2.0.0
 
 # 👉 #73 STAGE 6 (コストガード閾値の検証) を skip させないために必須
 google-cloud-bigquery>=3.0.0
+
+# 👉 #76 (IAM最小権限の定数検証) を skip させないために必須
+google-cloud-iam>=2.0.0
+
+Add-Content -Path requirements-test.txt -Value "google-cloud-resource-manager>=1.0.0"
+Get-Content requirements-test.txt
