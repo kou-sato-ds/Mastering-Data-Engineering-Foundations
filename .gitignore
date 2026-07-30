@@ -1,4 +1,4 @@
-# Spark/Hadoop
+﻿# Spark/Hadoop
 metastore_db/
 derby.log
 spark-warehouse/
@@ -12,11 +12,9 @@ __pycache__/
 .venv/
 env/
 venv/
-
 # IDE
 .vscode/
 .idea/
-
 # OS
 Thumbs.db
 .DS_Store
