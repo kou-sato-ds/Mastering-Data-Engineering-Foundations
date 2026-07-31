@@ -2,6 +2,40 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, GoogleCloudOptions
 from google.cloud import bigquery
 
+
+def build_merge_sql(target_table: str, staging_table: str, key: str = 'user_id') -> str:
+    """
+    🔍 MERGE文の構築だけを切り出した純粋関数。
+
+    Beamパイプライン本体はGCPクライアント一式を要求しローカル実行できないが、
+    SQL構築は純粋である——テスト可能な単位へ分離することで、
+    「MERGEの契約」を実コードとして検証可能にする(#80の指摘による改善)。
+    """
+    return f"""
+    MERGE `{target_table}` T
+    USING `{staging_table}` S
+    ON T.{key} = S.{key}
+    WHEN MATCHED THEN
+      UPDATE SET
+        score = S.score,
+        status = S.status,
+        updated_at = S.updated_at
+    WHEN NOT MATCHED THEN
+      INSERT ({key}, score, status, updated_at)
+      VALUES (S.{key}, S.score, S.status, S.updated_at)
+    """
+
+
+def execute_merge(client, sql: str) -> int:
+    """
+    🚨 MERGE実行と同期待機。result()を呼ばなければ失敗が例外にならず、
+    サイレント失敗として通り過ぎる。
+    """
+    job = client.query(sql)
+    job.result()  # 👉 完了を同期的に待機(エラー時は例外raise)
+    return job.num_dml_affected_rows
+
+
 def run_merge_upsert_pipeline():
     options = PipelineOptions()
     gc_options = options.view_as(GoogleCloudOptions)
@@ -33,27 +67,13 @@ def run_merge_upsert_pipeline():
         )
 
     # 🎯 【STAGE 2: MERGE実行】DWH層でUpsertを冪等に実行!
-    # 👉 同じMERGEを何度実行しても、targetテーブルの最終状態は常に同じ (冪等性の本質)
-    merge_sql = f"""
-    MERGE `{target_table}` T
-    USING `{staging_table}` S
-    ON T.user_id = S.user_id
-    WHEN MATCHED THEN
-      UPDATE SET
-        score = S.score,
-        status = S.status,
-        updated_at = S.updated_at
-    WHEN NOT MATCHED THEN
-      INSERT (user_id, score, status, updated_at)
-      VALUES (S.user_id, S.score, S.status, S.updated_at)
-    """
-
-    # 🚀 【STAGE 3: MERGE Job実行】BigQuery Client経由でSQL発火!
+    # 👉 SQL構築と実行を分離したことで、両者が個別にテスト可能になっている
+    merge_sql = build_merge_sql(target_table, staging_table)
     bq_client = bigquery.Client(project=project_id)
-    merge_job = bq_client.query(merge_sql)
-    merge_job.result()  # 👉 完了を同期的に待機 (エラー時は例外raise)
+    affected = execute_merge(bq_client, merge_sql)
 
-    print(f"🟢 MERGE完了! {merge_job.num_dml_affected_rows} 行が Upsert された")
+    print(f"🟢 MERGE完了! {affected} 行が Upsert された")
+
 
 if __name__ == '__main__':
     print("🚀 Apache Beam + BigQuery MERGE (Upsert) DWH冪等性基盤の監査を開始するのね...")
