@@ -62,6 +62,9 @@ def test_metric_filter_targets_undelivered_messages():
 # ================================================================
 # STAGE 2: 計測窓が妥当な長さであること
 #   短すぎれば欠測、長すぎれば古い値を最新として拾う。
+#   NOTE: TimeInterval は辞書で {'seconds': ...} を受け取るが、読み出しでは
+#         protobuf Timestamp ではなく DatetimeWithNanoseconds を返す。
+#         epoch 秒は .timestamp() で取得する。
 # ================================================================
 def test_time_interval_lookback_is_bounded():
     mod = _dlq_mon_mod()
@@ -70,9 +73,12 @@ def test_time_interval_lookback_is_bounded():
     now = 1_700_000_000.0
     interval = mod.build_time_interval(now, lookback_seconds=300)
 
-    assert interval.end_time.seconds == int(now)
-    assert interval.start_time.seconds == int(now) - 300
+    end_epoch = int(interval.end_time.timestamp())
+    start_epoch = int(interval.start_time.timestamp())
 
+    assert end_epoch == int(now)
+    assert end_epoch - start_epoch == 300, \
+        "the lookback window must be exactly the requested length"
 
 # ================================================================
 # STAGE 3: メトリクス未生成時に IndexError を出さないこと
