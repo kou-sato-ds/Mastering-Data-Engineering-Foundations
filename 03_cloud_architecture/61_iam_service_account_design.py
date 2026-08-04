@@ -18,25 +18,62 @@ REQUIRED_ROLES = [
     'roles/monitoring.metricWriter',   # 👉 カスタムメトリクス送出のみ
 ]
 
+# 🚨 これらが混入した瞬間に Blast Radius 制御が崩壊する
+FORBIDDEN_ROLES = ['roles/owner', 'roles/editor', 'roles/iam.securityAdmin']
+
+
+def build_sa_email(account_id: str, project_id: str) -> str:
+    """
+    🔍 サービスアカウントのメールアドレス構築。
+
+    ドメインが1文字違えばIAMバインディングは「成功するが誰にも効かない」——
+    存在しないプリンシパルへの付与はエラーにならないため、本番でしか
+    気づけないサイレント失敗になる(#84の指摘による改善)。
+    """
+    return f'{account_id}@{project_id}.iam.gserviceaccount.com'
+
+
+def build_sa_description(owner: str = 'data-engineering-team') -> str:
+    """
+    📋 監査時に「誰が何のために作ったSAか」を追跡可能にする記述。
+    """
+    return (
+        'Purpose: Execute Dataflow jobs for daily analytics pipeline. '
+        f'Owner: {owner}. '
+        'Rotation: quarterly review required.'
+    )
+
+
+def validate_roles(roles: list) -> list:
+    """
+    🚨 付与予定ロールから禁止ロールを検出する純粋関数。
+
+    「動かないから owner を付ける」という将来の妥協を、
+    バインディング実行前に構造的に拒否する。
+    """
+    return [r for r in roles if r in FORBIDDEN_ROLES]
+
+
+def build_member_binding(sa_email: str) -> str:
+    """
+    🔑 IAMポリシーのmember文字列。接頭辞 `serviceAccount:` を欠くと
+    「ユーザーアカウント」と解釈され、意図しない主体へ権限が渡る。
+    """
+    return f'serviceAccount:{sa_email}'
+
+
 def create_pipeline_service_account():
     """
     🛡️ パイプライン専用サービスアカウントを最小権限で作成。
-    Dataflow/Composer実行時にこのSAをアタッチすることで、
-    ジョブが盗まれても被害範囲を最小化する Blast Radius 制御を実現。
     """
     iam_client = iam_admin_v1.IAMClient()
 
-    # 🚀 【STAGE 1: SA本体作成】用途明示の命名で監査可能性を担保!
     request = types.CreateServiceAccountRequest(
         name=PROJECT_NAME,
         account_id=SA_ACCOUNT_ID,
         service_account=types.ServiceAccount(
             display_name='Dataflow Pipeline Runner (least-privilege)',
-            description=(
-                'Purpose: Execute Dataflow jobs for daily analytics pipeline. '
-                'Owner: data-engineering-team. '
-                'Rotation: quarterly review required.'
-            )
+            description=build_sa_description(),
         )
     )
     sa = iam_client.create_service_account(request=request)
@@ -46,42 +83,34 @@ def create_pipeline_service_account():
 
 def grant_least_privilege_roles():
     """
-    🎯 プロジェクトIAMポリシーにサービスアカウントのバインディングを追加。
-    ロール別に分割することで「なぜこの権限が必要か」を監査ログで追跡可能。
+    🎯 プロジェクトIAMポリシーへ最小権限ロールをバインドする。
     """
+    violations = validate_roles(REQUIRED_ROLES)
+    if violations:
+        raise ValueError(f"forbidden roles detected, refusing to bind: {violations}")
+
     rm_client = resourcemanager_v3.ProjectsClient()
 
-    # 🔍 【STAGE 2: 既存ポリシー取得】Read-Modify-Writeパターンで競合回避!
-    policy = rm_client.get_iam_policy(
-        request={'resource': PROJECT_NAME}
-    )
+    # 🔍 【Read-Modify-Write】etag付き楽観的排他制御で競合回避
+    policy = rm_client.get_iam_policy(request={'resource': PROJECT_NAME})
 
-    # 🚀 【STAGE 3: ロール追加】各ロールを個別バインディングで明示追加!
-    member = f'serviceAccount:{SA_EMAIL}'
+    member = build_member_binding(SA_EMAIL)
     for role in REQUIRED_ROLES:
-        binding = next(
-            (b for b in policy.bindings if b.role == role),
-            None
-        )
+        binding = next((b for b in policy.bindings if b.role == role), None)
         if binding is None:
-            # 👉 新規バインディング作成
             policy.bindings.add(role=role, members=[member])
         elif member not in binding.members:
-            # 👉 既存バインディングへメンバー追加
             binding.members.append(member)
         print(f"[BIND] {role} → {member}")
 
-    # 🚀 【STAGE 4: ポリシー確定】etag付きで楽観的排他制御!
-    rm_client.set_iam_policy(
-        request={'resource': PROJECT_NAME, 'policy': policy}
-    )
+    rm_client.set_iam_policy(request={'resource': PROJECT_NAME, 'policy': policy})
     print(f"[POLICY UPDATED] {len(REQUIRED_ROLES)} roles granted")
 
 
 def audit_service_account_keys():
     """
-    🚨 サービスアカウントキー(ダウンロード可能なJSON)の存在を監査し警告。
-    実務ではWorkload Identity Federation を使ってキーレス運用が原則。
+    🚨 ダウンロード可能なJSONキーの存在を監査。
+    実務では Workload Identity Federation によるキーレス運用が原則。
     """
     iam_client = iam_admin_v1.IAMClient()
     sa_name = f'{PROJECT_NAME}/serviceAccounts/{SA_EMAIL}'
@@ -95,8 +124,6 @@ def audit_service_account_keys():
     if len(response.keys) > 0:
         print(f"[⚠️ AUDIT] {len(response.keys)} USER_MANAGED keys detected!")
         print("  → Workload Identity Federationへの移行を強く推奨")
-        for key in response.keys:
-            print(f"    - key_id={key.name.split('/')[-1]}, created={key.valid_after_time}")
     else:
         print("[✅ AUDIT] No user-managed keys. Keyless operation confirmed.")
 
@@ -104,6 +131,4 @@ def audit_service_account_keys():
 if __name__ == '__main__':
     print("🚀 GCP IAM Service Account 最小権限設計基盤の監査を開始するのね...")
     # create_pipeline_service_account()  # 初回のみ実行
-    # grant_least_privilege_roles()      # ロールバインディング
-    # audit_service_account_keys()       # キーレス運用の監査
     print("🟢 監査完了!最小権限SAおよびBlast Radius制御基盤が完全画定したのね!")
