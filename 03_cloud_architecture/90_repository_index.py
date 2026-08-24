@@ -40,7 +40,7 @@ CONCERN_MAP = {
     'testing': [68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79,
                 80, 81, 82, 83, 84, 85],
     'deployment': [86, 87, 88, 89],
-    'meta': [90],
+    'meta': [90, 91],
 }
 
 # 👉 姉妹プロジェクトとの対応（AWS/GCP対称構造）
@@ -49,6 +49,7 @@ SIBLING_MAP = {
     'fault_tolerance': 'ADR-003 (exception propagation + SQS DLQ)',
     'observability': 'ADR-004 / ADR-005 (Powertools + correlation id)',
     'testing': 'ADR-006 / ADR-007 (broken main postmortem + collection guard)',
+    'meta': 'ADR-008 (ADR index verified by tests)',
 }
 
 
