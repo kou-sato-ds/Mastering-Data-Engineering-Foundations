@@ -20,8 +20,7 @@
 | ingestion | #52-#54 | — |
 | testing | #68-#71, #73-#85 | ADR-006 / ADR-007 (broken main postmortem + collection guard) |
 | deployment | #86-#89 | — |
-| meta | #90-#93 | ADR-008 (ADR index verified by tests) |
-| ADR-009 | documentation | 想定問答をコードとして持ち根拠をテストで守る | 書いたADRを語れない |
+| meta | #90-#94 | ADR-008 (ADR index verified by tests) |
 
 > **姉妹プロジェクト**: [serverless-scraping-data-pipeline](https://github.com/kou-sato-ds/serverless-scraping-data-pipeline)
 > — AWS Lambda によるサーバレスパイプライン。冪等性・障害耐性・観測性・テスト戦略の各領域で、
