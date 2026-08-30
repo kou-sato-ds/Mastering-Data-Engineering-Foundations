@@ -95,9 +95,11 @@ def test_unindexed_items_stay_bounded():
     mod = _index_mod()
     unindexed = mod.find_unindexed_items()
 
-    assert len(unindexed) <= 5, (
+    assert len(unindexed) <= 1, (
         f"{len(unindexed)} items are unclassified: {unindexed}. "
-        "An index that omits most of the repository does not help a reader."
+        "Run `python 95_classification_advisor.py` for suggested concerns. "
+        "The threshold is intentionally tight: three consecutive items were "
+        "left unindexed before this was tightened."
     )
 
 
