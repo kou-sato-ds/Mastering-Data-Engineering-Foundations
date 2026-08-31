@@ -49,9 +49,9 @@ def load_index():
 CLASSIFICATION_RULES = [
     (r'(narrative|script|index|advisor|sibling)', 'meta'),
     (r'(guard|testing|validation|coverage|discovery)', 'testing'),
+    (r'(dlq|redrive|dead_letter)', 'fault_tolerance'),
     (r'(flex_template|build|deployment|runbook)', 'deployment'),
     (r'(monitoring|logging|alerting|observability)', 'observability'),
-    (r'(dlq|redrive|dead_letter)', 'fault_tolerance'),
     (r'(iam|service_account|privilege)', 'security'),
     (r'(cost|optimization|partition)', 'cost'),
     (r'(window|session)', 'windowing'),
