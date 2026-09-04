@@ -48,6 +48,7 @@ def load_index():
 #    順序が意味を持つため dict ではなくリストで持つ。
 CLASSIFICATION_RULES = [
     (r'(narrative|script|index|advisor|sibling)', 'meta'),
+    (r'(data_quality|quality|drift|freshness)', 'data_quality'),
     (r'(guard|testing|validation|coverage|discovery)', 'testing'),
     (r'(dlq|redrive|dead_letter)', 'fault_tolerance'),
     (r'(flex_template|build|deployment|runbook)', 'deployment'),
