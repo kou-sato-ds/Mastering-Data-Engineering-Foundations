@@ -34,7 +34,7 @@ SIBLING_REPO = 'serverless-scraping-data-pipeline'
 # 🚨 姉妹プロジェクトに実在する ADR 番号の上限。
 #    向こうで ADR が増えたらここを更新する——
 #    リポジトリをまたぐ整合は自動検証できないため、手動更新点を明示する。
-SIBLING_ADR_MAX = 8
+SIBLING_ADR_MAX = 10
 
 
 def load_module_from_path(filename: str, module_name: str):
