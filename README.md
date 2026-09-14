@@ -22,7 +22,6 @@
 | deployment | #86-#89 | — |
 | meta | #90-#94 | ADR-008 (ADR index verified by tests) |
 | data_quality | #97-#99 | — |
-| ADR-010 | data_quality | パースは通るが異常なデータを検知する | 品質劣化が素通りする |
 | meta | #90-#96, #101 | ADR-008 (ADR index verified by tests) |
 | data_quality | #97-#100 | ADR-010 (anomalies that parse successfully) |
 
