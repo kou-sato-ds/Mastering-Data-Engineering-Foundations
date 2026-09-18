@@ -24,6 +24,7 @@
 | data_quality | #97-#99 | — |
 | meta | #90-#96, #101 | ADR-008 (ADR index verified by tests) |
 | data_quality | #97-#100 | ADR-010 (anomalies that parse successfully) |
+| backfill | #103 | — |
 
 > **姉妹プロジェクト**: [serverless-scraping-data-pipeline](https://github.com/kou-sato-ds/serverless-scraping-data-pipeline)
 > — AWS Lambda によるサーバレスパイプライン。冪等性・障害耐性・観測性・テスト戦略の各領域で、
