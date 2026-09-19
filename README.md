@@ -20,12 +20,9 @@
 | ingestion | #52-#54 | — |
 | testing | #68-#71, #73-#85 | ADR-006 / ADR-007 (broken main postmortem + collection guard) |
 | deployment | #86-#89 | — |
-| meta | #90-#94 | ADR-008 (ADR index verified by tests) |
-| data_quality | #97-#99 | — |
-| meta | #90-#96, #101 | ADR-008 (ADR index verified by tests) |
+| meta | #90-#96, #101-#102, #104 | ADR-008 (ADR index verified by tests) |
 | data_quality | #97-#100 | ADR-010 (anomalies that parse successfully) |
 | backfill | #103 | — |
-|meta| [90, 91, 92, 93, 94, 95, 96, 101, 102, 104]|
 
 > **姉妹プロジェクト**: [serverless-scraping-data-pipeline](https://github.com/kou-sato-ds/serverless-scraping-data-pipeline)
 > — AWS Lambda によるサーバレスパイプライン。冪等性・障害耐性・観測性・テスト戦略の各領域で、
