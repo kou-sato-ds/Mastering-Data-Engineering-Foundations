@@ -44,7 +44,9 @@ CONCERN_MAP = {
     'data_quality': [97, 98, 99, 100],
     'backfill': [103],
     'schema_evolution': [105],
-    'schema_evolution': [105], 
+    'incremental': [106],
+    'schema_evolution': [105],
+    'incremental': [106], 
 }
 
 # 👉 姉妹プロジェクトとの対応（AWS/GCP対称構造）
