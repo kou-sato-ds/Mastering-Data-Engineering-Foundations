@@ -55,6 +55,8 @@ SIBLING_MAP = {
     'testing': 'ADR-006 / ADR-007 (broken main postmortem + collection guard)',
     'meta': 'ADR-008 (ADR index verified by tests)',
     'data_quality': 'ADR-010 (anomalies that parse successfully)',
+    'schema_evolution': 'ADR-012 (schema changes classified by compatibility)',
+    'backfill': 'ADR-013 (replay failed hourly slots)',
     
 }
 
