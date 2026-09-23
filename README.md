@@ -22,10 +22,8 @@
 | deployment | #86-#89 | — |
 | meta | #90-#96, #101-#102, #104 | ADR-008 (ADR index verified by tests) |
 | data_quality | #97-#100 | ADR-010 (anomalies that parse successfully) |
-| backfill | #103 | — |
-| schema_evolution | #105 | — |
-| ADR-012 | schema_evolution | スキーマ変更を互換性で分類する | バージョンが実態と食い違う |
-| ADR-013 | backfill | 失敗した時間帯を同じイベントで再生する | RSSは過去を取り直せない |
+| backfill | #103 | ADR-013 (replay failed hourly slots) |
+| schema_evolution | #105 | ADR-012 (schema changes classified by compatibility) |
 > **姉妹プロジェクト**: [serverless-scraping-data-pipeline](https://github.com/kou-sato-ds/serverless-scraping-data-pipeline)
 > — AWS Lambda によるサーバレスパイプライン。冪等性・障害耐性・観測性・テスト戦略の各領域で、
 > 本リポジトリと**同一の設計思想を別クラウドで実装**しています。
@@ -1473,7 +1471,8 @@ DLQへの隔離(#57)と障害の可視化(#66)から、**「誰が見張り、�
 
 > **学びの足跡**: > 「第113の型」を掌握。[ ここを実測値で埋める ]。#105(検知)→#111(再処理)→#113(進化)で、**スキーマが変わる状況への対処が揃いました**。検知だけでは何も守れず、進化の可否を判断できても過去データを埋める手段が無ければ運用できません。
 >
-> ## 114. 姉妹対応の反映と問答の拡充 — 作ったものを両側から辿れるようにするETL
+
+## 114. 姉妹対応の反映と問答の拡充 — 作ったものを両側から辿れるようにするETL
 
 > 🪄 **たとえ**:先週ADR-012(スキーマ進化)とADR-013(バックフィル)をAWS側にマージしたが、**GCP側の`SIBLING_MAP`は更新していなかった**——索引の該当行は「—」のまま、実装があるのに片側から辿れない状態だった。#109で「実在するものが書かれているか」を守る仕組みを作ったのに、同じ漏れを繰り返している。この時、対応表を更新し`SIBLING_ADR_MAX`を13へ引き上げ、同時に#113/#111の問答を台本へ加えることで、**作ったものが両側から辿れ、かつ語れる状態**を回復する
 
