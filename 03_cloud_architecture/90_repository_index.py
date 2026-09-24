@@ -59,6 +59,7 @@ SIBLING_MAP = {
     'data_quality': 'ADR-010 (anomalies that parse successfully)',
     'schema_evolution': 'ADR-012 (schema changes classified by compatibility)',
     'backfill': 'ADR-013 (replay failed hourly slots)',
+    'incremental': 'ADR-014 (watermark stored in S3)',
     
 }
 
