@@ -25,8 +25,8 @@
 | backfill | #103 | ADR-013 (replay failed hourly slots) |
 | schema_evolution | #105 | ADR-012 (schema changes classified by compatibility) |
 | incremental | #106 | ADR-014 (watermark stored in S3) |
-> **姉妹プロジェクト**: [serverless-scraping-data-pipeline](https://github.com/kou-sato-ds/serverless-scraping-data-pipeline)
 | modeling | #107 | — |
+> **姉妹プロジェクト**: [serverless-scraping-data-pipeline](https://github.com/kou-sato-ds/serverless-scraping-data-pipeline)
 > — AWS Lambda によるサーバレスパイプライン。冪等性・障害耐性・観測性・テスト戦略の各領域で、
 > 本リポジトリと**同一の設計思想を別クラウドで実装**しています。
 ## 📝 最終更新：2026年5月16日（実装編：クラウドパイプラインと最適化の型）
