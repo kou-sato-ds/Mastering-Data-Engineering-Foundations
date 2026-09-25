@@ -45,8 +45,10 @@ CONCERN_MAP = {
     'backfill': [103],
     'schema_evolution': [105],
     'incremental': [106],
+    'modeling': [107],
     'schema_evolution': [105],
-    'incremental': [106], 
+    'incremental': [106],
+    'modeling': [107], 
 }
 
 # 👉 姉妹プロジェクトとの対応（AWS/GCP対称構造）
