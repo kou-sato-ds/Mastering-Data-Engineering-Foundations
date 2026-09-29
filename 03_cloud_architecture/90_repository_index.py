@@ -32,7 +32,7 @@ CONCERN_MAP = {
     'observability': [60, 66, 67, 111],
     'security': [61, 108, 109],
     'iac': [62],
-    'cost': [64],
+    'cost': [64, 112],
     'windowing': [55, 56, 63],
     'joins': [65],
     'orchestration': [59],

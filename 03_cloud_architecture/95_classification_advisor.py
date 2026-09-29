@@ -48,11 +48,13 @@ def load_index():
 #    順序が意味を持つため dict ではなくリストで持つ。
 CLASSIFICATION_RULES = [
     (r'(narrative|script|index|advisor|sibling)', 'meta'),
+    (r'(cost_estimate|quote|pricing)', 'cost'),
     (r'(sla|slo|error_budget)', 'observability'),
     (r'(pii|masking|pseudonym|deletion|retention|erasure)', 'security'),
     (r'(scd|slowly_changing|star_schema)', 'modeling'),
     (r'(incremental|high_water|checkpoint)', 'incremental'),
     (r'(schema_evolution|evolution|migration)', 'schema_evolution'),
+    (r'(cost_estimate|quote|pricing)', 'cost'),
     (r'(sla|slo|error_budget)', 'observability'),
     (r'(pii|masking|pseudonym|deletion|retention|erasure)', 'security'),
     (r'(scd|slowly_changing|star_schema)', 'modeling'),
