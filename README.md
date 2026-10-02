@@ -27,7 +27,6 @@
 | incremental | #106 | ADR-014 (watermark stored in S3) |
 | modeling | #107 | — |
 | lineage | #114 | — |
-| lineage | #114 | — |
 > **姉妹プロジェクト**: [serverless-scraping-data-pipeline](https://github.com/kou-sato-ds/serverless-scraping-data-pipeline)
 > — AWS Lambda によるサーバレスパイプライン。冪等性・障害耐性・観測性・テスト戦略の各領域で、
 > 本リポジトリと**同一の設計思想を別クラウドで実装**しています。

@@ -49,7 +49,6 @@ def load_index():
 CLASSIFICATION_RULES = [
     (r'(narrative|script|index|advisor|sibling)', 'meta'),
     (r'(lineage|impact|dependency)', 'lineage'),
-    (r'(lineage|impact|dependency)', 'lineage'),
     (r'(data_contract|contract)', 'data_quality'),
     (r'(cost_estimate|quote|pricing)', 'cost'),
     (r'(sla|slo|error_budget)', 'observability'),
@@ -57,7 +56,6 @@ CLASSIFICATION_RULES = [
     (r'(scd|slowly_changing|star_schema)', 'modeling'),
     (r'(incremental|high_water|checkpoint)', 'incremental'),
     (r'(schema_evolution|evolution|migration)', 'schema_evolution'),
-    (r'(lineage|impact|dependency)', 'lineage'),
     (r'(lineage|impact|dependency)', 'lineage'),
     (r'(data_contract|contract)', 'data_quality'),
     (r'(cost_estimate|quote|pricing)', 'cost'),

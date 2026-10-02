@@ -47,11 +47,9 @@ CONCERN_MAP = {
     'incremental': [106],
     'modeling': [107],
     'lineage': [114],
-    'lineage': [114],
     'schema_evolution': [105],
     'incremental': [106],
     'modeling': [107],
-    'lineage': [114],
     'lineage': [114], 
 }
 
