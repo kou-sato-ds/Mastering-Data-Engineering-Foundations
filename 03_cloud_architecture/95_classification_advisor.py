@@ -48,6 +48,7 @@ def load_index():
 #    順序が意味を持つため dict ではなくリストで持つ。
 CLASSIFICATION_RULES = [
     (r'(narrative|script|index|advisor|sibling)', 'meta'),
+    (r'(type_hint|annotation)', 'testing'),
     (r'(retry|backoff|jitter)', 'fault_tolerance'),
     (r'(lineage|impact|dependency)', 'lineage'),
     (r'(data_contract|contract|reconcil)', 'data_quality'),
@@ -57,6 +58,7 @@ CLASSIFICATION_RULES = [
     (r'(scd|slowly_changing|star_schema)', 'modeling'),
     (r'(incremental|high_water|checkpoint)', 'incremental'),
     (r'(schema_evolution|evolution|migration)', 'schema_evolution'),
+    (r'(type_hint|annotation)', 'testing'),
     (r'(retry|backoff|jitter)', 'fault_tolerance'),
     (r'(lineage|impact|dependency)', 'lineage'),
     (r'(data_contract|contract|reconcil)', 'data_quality'),
