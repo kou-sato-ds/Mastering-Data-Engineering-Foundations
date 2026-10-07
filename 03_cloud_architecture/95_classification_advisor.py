@@ -49,6 +49,7 @@ def load_index():
 CLASSIFICATION_RULES = [
     (r'(narrative|script|index|advisor|sibling)', 'meta'),
     (r'(timezone|business_date|day_bound)', 'windowing'),
+    (r'(compaction|small_file)', 'cost'),
     (r'(type_hint|annotation)', 'testing'),
     (r'(retry|backoff|jitter)', 'fault_tolerance'),
     (r'(lineage|impact|dependency)', 'lineage'),
@@ -60,6 +61,7 @@ CLASSIFICATION_RULES = [
     (r'(incremental|high_water|checkpoint)', 'incremental'),
     (r'(schema_evolution|evolution|migration)', 'schema_evolution'),
     (r'(timezone|business_date|day_bound)', 'windowing'),
+    (r'(compaction|small_file)', 'cost'),
     (r'(type_hint|annotation)', 'testing'),
     (r'(retry|backoff|jitter)', 'fault_tolerance'),
     (r'(lineage|impact|dependency)', 'lineage'),
