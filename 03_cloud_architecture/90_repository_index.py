@@ -34,7 +34,7 @@ CONCERN_MAP = {
     'iac': [62],
     'cost': [64, 112, 118],
     'windowing': [55, 56, 63, 119],
-    'joins': [65],
+    'joins': [65, 120],
     'orchestration': [59],
     'ingestion': [52, 53, 54],
     'testing': [68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79,
