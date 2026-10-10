@@ -14,7 +14,7 @@
 | security | #61, #108-#109 | — |
 | iac | #62 | — |
 | cost | #64, #112, #118 | — |
-| windowing | #55-#56, #63, #119 | — |
+| windowing | #55-#56, #63, #119 | ADR-015 (JST day spans two UTC partitions) |
 | joins | #65, #120 | — |
 | orchestration | #59, #121 | — |
 | ingestion | #52-#54 | — |

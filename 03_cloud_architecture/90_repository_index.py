@@ -64,6 +64,7 @@ SIBLING_MAP = {
     'schema_evolution': 'ADR-012 (schema changes classified by compatibility)',
     'backfill': 'ADR-013 (replay failed hourly slots)',
     'incremental': 'ADR-014 (watermark stored in S3)',
+    'windowing': 'ADR-015 (JST day spans two UTC partitions)',
     
 }
 
