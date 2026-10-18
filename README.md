@@ -24,7 +24,7 @@
 | data_quality | #97-#100, #113, #115 | ADR-010 (anomalies that parse successfully) |
 | backfill | #103 | ADR-013 (replay failed hourly slots) |
 | schema_evolution | #105 | ADR-012 (schema changes classified by compatibility) |
-| incremental | #106 | ADR-014 (watermark stored in S3) |
+| incremental | #106, #125 | ADR-014 (watermark stored in S3) |
 | modeling | #107, #124 | — |
 | lineage | #114 | — |
 > **姉妹プロジェクト**: [serverless-scraping-data-pipeline](https://github.com/kou-sato-ds/serverless-scraping-data-pipeline)
@@ -1763,3 +1763,16 @@ DLQへの隔離(#57)と障害の可視化(#66)から、**「誰が見張り、�
 - **大半が不明なら止める**: 数件ならマスタの遅れで済むが、大半が不明ならマスタの取り込み自体が壊れている。割合の上限で止める。
 
 > **学びの足跡**: > 「第133の型」を掌握。**10 passed を確認**。#116のSCD2が「次元の履歴をどう持つか」なら、本項は「**ファクトから次元をどう引くか**」です。統計検定2級の視点で言えば、黙って行を捨てることは、**標本から都合の悪い値を除くのと同じ偏り**を生みます。
+
+## 134. CDCの適用 — 届く順番が乱れても、消した行を生き返らせないETL
+
+> 🪄 **たとえ**:業務DBの「追加・更新・削除」の記録(変更ログ)を受け取り、分析側のテーブルに同じ状態を再現する。ところが変更ログは**順番が入れ替わって届き、同じものが2回届き、削除の後に古い更新が遅れて届く**。この時、キーごとに最後に適用した通し番号(seq)を覚え、削除した行も「何番で消したか」だけは墓石として残すことで、**過去に巻き戻らず、消した行が生き返らない**変更適用ラインを確立する
+
+`ChangeEvent`・`CdcTable`・`apply_batch()`・`compact_tombstones()`と11パターンの検証を実装する `CDCの適用(第134の型)` パターンを習得しました。
+
+- **古い変更は適用せず数える**: 最後に適用したseqより小さい変更は`stale`、同じものは`duplicate`。`test_late_old_update_does_not_roll_back`で、過去の値に巻き戻らないことを固定した。
+- **墓石で生き返りを防ぐ**: 削除しても`versions`にseqを残す。`test_deleted_row_is_not_resurrected_by_a_late_update`は、#118の削除依頼と重なれば法的な事故になる場面を再現している。
+- **バッチの中は並べ替える**: 1回に受け取った分はseq順に並べてから適用する。バッチを跨いだ遅れだけが`stale`として報告される。
+- **墓石の片付けには条件がある**: 墓石を無限に残せば表が膨らむが、早く忘れれば行が生き返る。`compact_tombstones()`の`before_seq`は「これより古い変更はもう届かない」と言える番号に限る。
+
+> **学びの足跡**: > 「第134の型」を掌握。**11 passed を確認**。#115のインクリメンタル取得が「どこまで取ったか」を覚えるなら、本項は「**取った変更をどう正しく反映するか**」です。#132の重複排除・#118の削除依頼と重ねて、DB同期の三大事故(重複・巻き戻り・復活)を型で塞ぎました。
