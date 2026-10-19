@@ -56,6 +56,7 @@ CLASSIFICATION_RULES = [
     (r'(dedup|duplicate_delivery)', 'idempotency'),
     (r'(dimension_key|surrogate|unknown_member)', 'modeling'),
     (r'(cdc|change_data_capture)', 'incremental'),
+    (r'(duplicate_definition|dup_key)', 'testing'),
     (r'(type_hint|annotation)', 'testing'),
     (r'(retry|backoff|jitter)', 'fault_tolerance'),
     (r'(lineage|impact|dependency)', 'lineage'),
