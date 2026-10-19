@@ -131,20 +131,18 @@ def test_no_mojibake_in_test_files(marker):
 # ================================================================
 # STAGE 5: 検証対象の実装ファイルが構文的に正しいこと
 #
-#   NOTE: 拡張子が `.sql.py` のファイル(#06/#07)は中身がSQLであり、
-#         Pythonとして parse できない。これは本ガードのスコープ外の
-#         別問題(拡張子の誤り)として除外し、Pythonファイルのみを検査する。
-#         ガードの目的は「テストと実装が静かに壊れる」ことの検知であり、
-#         スコープを広げすぎると常に赤いチェックになり信号の意味が失われる
+#   NOTE: 2026-08-16 の初版では、中身が SQL なのに拡張子が `.sql.py` の
+#         2件(#06/#07)を「本ガードのスコープ外」として除外していた。
+#         1つのガードに何でも背負わせると常に赤くなり、信号の意味が失われる
 #         (姉妹プロジェクト ADR-006 の教訓)。
+#         2026-10-19、#126 の重複定義ガードが同じ2件を検出したため
+#         `.sql` に改名し、ここでの除外も削除した。
 # ================================================================
 def test_every_python_source_file_is_syntactically_valid():
     broken = []
     for path in sorted(HERE.glob("*.py")):
         if path.name.endswith(("_testing.py", "_validation.py")):
             continue
-        if ".sql.py" in path.name:
-            continue  # 👉 中身がSQLのため対象外(拡張子は別途整理する)
         try:
             ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         except SyntaxError as e:
