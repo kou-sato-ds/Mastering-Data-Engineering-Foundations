@@ -42,7 +42,7 @@ CONCERN_MAP = {
     'deployment': [86, 87, 88, 89],
     'meta': [90, 91, 92, 93, 94, 95, 96, 101, 102, 104, 128],
     'data_quality': [97, 98, 99, 100, 113, 115],
-    'backfill': [103],
+    'backfill': [103, 129],
     'schema_evolution': [105],
     'incremental': [106, 125],
     'modeling': [107, 124],
