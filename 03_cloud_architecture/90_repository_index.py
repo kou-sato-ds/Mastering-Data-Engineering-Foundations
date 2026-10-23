@@ -46,7 +46,7 @@ CONCERN_MAP = {
     'schema_evolution': [105],
     'incremental': [106, 125],
     'modeling': [107, 124],
-    'lineage': [114],
+    'lineage': [114, 130],
 }
 
 # 👉 姉妹プロジェクトとの対応（AWS/GCP対称構造）
