@@ -31,7 +31,7 @@ CONCERN_MAP = {
     'fault_tolerance': [57, 67, 116],
     'observability': [60, 66, 67, 111],
     'security': [61, 108, 109],
-    'iac': [62],
+    'iac': [62, 131],
     'cost': [64, 112, 118],
     'windowing': [55, 56, 63, 119],
     'joins': [65, 120],
