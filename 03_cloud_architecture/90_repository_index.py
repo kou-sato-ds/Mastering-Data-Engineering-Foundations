@@ -27,7 +27,7 @@ HERE = Path(__file__).parent
 #    キーは設計上の関心、値は該当する項目番号。
 CONCERN_MAP = {
     'foundations': list(range(1, 52)),   # 👉 #01-#51: Spark/ML/BQ の基礎習得期
-    'idempotency': [58, 123],
+    'idempotency': [58, 123, 138],
     'fault_tolerance': [57, 67, 116, 137],
     'observability': [60, 66, 67, 111, 134],
     'security': [61, 108, 109],
