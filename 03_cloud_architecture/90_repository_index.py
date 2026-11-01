@@ -30,7 +30,7 @@ CONCERN_MAP = {
     'idempotency': [58, 123, 138],
     'fault_tolerance': [57, 67, 116, 137],
     'observability': [60, 66, 67, 111, 134],
-    'security': [61, 108, 109],
+    'security': [61, 108, 109, 139],
     'iac': [62, 131],
     'cost': [64, 112, 118],
     'windowing': [55, 56, 63, 119],
