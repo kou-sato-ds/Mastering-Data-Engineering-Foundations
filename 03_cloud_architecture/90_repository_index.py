@@ -33,7 +33,7 @@ CONCERN_MAP = {
     'security': [61, 108, 109, 139],
     'iac': [62, 131],
     'cost': [64, 112, 118],
-    'windowing': [55, 56, 63, 119],
+    'windowing': [55, 56, 63, 119, 141],
     'joins': [65, 120, 132],
     'orchestration': [59, 121, 133],
     'ingestion': [52, 53, 54, 122],
