@@ -28,7 +28,7 @@ HERE = Path(__file__).parent
 CONCERN_MAP = {
     'foundations': list(range(1, 52)),   # 👉 #01-#51: Spark/ML/BQ の基礎習得期
     'idempotency': [58, 123, 138],
-    'fault_tolerance': [57, 67, 116, 137],
+    'fault_tolerance': [57, 67, 116, 137, 151],
     'observability': [60, 66, 67, 111, 134],
     'security': [61, 108, 109, 139],
     'iac': [62, 131, 145],
