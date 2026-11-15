@@ -45,7 +45,7 @@ CONCERN_MAP = {
     'backfill': [103, 129, 146],
     'schema_evolution': [105, 136],
     'incremental': [106, 125, 144],
-    'modeling': [107, 124, 140],
+    'modeling': [107, 124, 140, 153],
     'lineage': [114, 130, 147],
 }
 
