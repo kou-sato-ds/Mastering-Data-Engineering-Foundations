@@ -29,7 +29,7 @@ CONCERN_MAP = {
     'foundations': list(range(1, 52)),   # 👉 #01-#51: Spark/ML/BQ の基礎習得期
     'idempotency': [58, 123, 138, 155],
     'fault_tolerance': [57, 67, 116, 137, 151],
-    'observability': [60, 66, 67, 111, 134],
+    'observability': [60, 66, 67, 111, 134, 157],
     'security': [61, 108, 109, 139, 152],
     'iac': [62, 131, 145],
     'cost': [64, 112, 118, 142],
